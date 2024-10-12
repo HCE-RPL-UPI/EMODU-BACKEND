@@ -26,7 +26,19 @@ const getRandomInterventionWords = async (req, res, next) => {
     }   
 }
 
+const getOpenAIInterventionWords = async (req, res, next) => {
+    try {
+        const { filter, category, name } = req.query;
+        const data = await _interventionWords.getOpenAI({ filter, category, name });
+        return res.status(200).send({ data });
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 module.exports = {
     getRandomInterventionWords,
-    getListInterventionWords
+    getListInterventionWords,
+    getOpenAIInterventionWords
 };

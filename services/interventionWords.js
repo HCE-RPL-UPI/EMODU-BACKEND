@@ -1,5 +1,6 @@
 const {personalizeMessage} = require('../utils/helper')
 const {SAD, ANGRY, FEAR, DISGUST} = require('../utils/interventionWords')
+const { readPromptFile, getOpenAIResponse } = require('../utils/openAI');
 
 const getList = async () => {
   const data = {
@@ -54,7 +55,23 @@ const getRandom = async ({filter, category, name}) => {
   return randomWord
 }
 
+const getOpenAI = async ({ filter, category, name}) => {
+  if (!filter || !category) {
+    throw new Error('missing parameters: filter and category are required.')
+  }
+
+  const prompt = await readPromptFile();
+  const openAIResponse = await getOpenAIResponse(filter, category, name, prompt);
+
+  if (openAIResponse.includes('[name]')) {
+      return personalizeMessage(name, openAIResponse);
+   }
+
+  return openAIResponse;
+};
+
 module.exports = {
   getList,
   getRandom,
+  getOpenAI
 }
